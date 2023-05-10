@@ -1,13 +1,11 @@
 import os
 from flask import Flask, flash, request, redirect, url_for, session
-from flask.helpers import send_from_directory
 from werkzeug.utils import secure_filename
 import logging
 from zipfile import ZipFile
 import pandas as pd
 import json
 from collections import Counter
-from flask_cors import CORS,cross_origin
 
 logging.basicConfig(level=logging.INFO)
 
@@ -18,17 +16,10 @@ logger = logging.getLogger('API')
 UPLOAD_FOLDER = ''
 ALLOWED_EXTENSIONS = set(['zip'])
 
-app = Flask(__name__,static_folder='../frontend/build',static_url_path='')
-CORS(app)
+app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/', methods=['POST'])
-@cross_origin()
-def serve():
-    return send_from_directory(app.static_folder,'index.html')
-    
 @app.route('/upload', methods=['POST'])
-@cross_origin()
 def fileUpload():
     target=os.path.join(UPLOAD_FOLDER,'.')
     if not os.path.isdir(target):
@@ -41,7 +32,6 @@ def fileUpload():
     logger.info("success")
     return response
 @app.route('/getall', methods=['GET'])
-@cross_origin()
 def getall():
     startdate = request.args.get('date1')
     enddate = request.args.get('date2')
